@@ -42,6 +42,8 @@ class NativeTextInputBase extends NativeInputBase
 	@:isVar public var letterSpacing(get_letterSpacing, set_letterSpacing):Float;
 	
 	@:isVar public var fontSize(get_fontSize, set_fontSize):Float;
+
+	@:isVar public var align(get_align, set_align):String;
 	
 	/**
 	 * class constructor
@@ -113,6 +115,16 @@ class NativeTextInputBase extends NativeInputBase
 	private function get_letterSpacing():Float
 	{
 		return letterSpacing;
+	}
+
+	private function set_align(value:String):String
+	{
+		return align = value;
+	}
+
+	private function get_align():String
+	{
+		return align;
 	}
 	
 	override private function get_intrinsicWidth():Int

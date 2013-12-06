@@ -86,6 +86,23 @@ class TextInputRenderer extends InputRenderer
 		nativeTextInput.fontFamily = CSSValueConverter.getFontFamilyAsStringArray(coreStyle.fontFamily)[0];
 		nativeTextInput.letterSpacing = coreStyle.usedValues.letterSpacing;
 		nativeTextInput.fontSize = coreStyle.getAbsoluteLength(coreStyle.fontSize);
+		nativeTextInput.align = switch( coreStyle.textAlign ){
+			case KEYWORD(value):
+				switch( value ){
+					case CENTER :
+						"center";
+					case LEFT :
+						"left";
+					case RIGHT :
+						"right";
+					case JUSTIFY :
+						"justify";
+					default :
+						throw 'Illegal alignment';
+				}
+			default:
+				throw 'Illegal alignment';
+		}
 	
 		var bold:Bool = false;
 		switch (coreStyle.fontWeight)

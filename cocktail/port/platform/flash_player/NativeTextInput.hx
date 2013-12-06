@@ -18,6 +18,7 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldType;
 import cocktail.core.geom.GeomData;
+import flash.text.TextFormatAlign;
 
 /**
  * This is the flash port of for the native text input,
@@ -40,6 +41,11 @@ class NativeTextInput extends NativeTextInputBase
 	
 	private static inline var MONOSPACE_GENERIC_FONT_NAME:String = "typewriter";
 	private static inline var MONOSPACE_FLASH_FONT_NAME:String = "_typewriter";
+
+	/**
+	* Flash textfields include a 2px gutter...
+	**/
+	private static inline var TEXTFIELD_GUTTER = 2;
 
 	/**
 	 * The wrapped native flash text field
@@ -77,7 +83,9 @@ class NativeTextInput extends NativeTextInputBase
 		
 		//make the text field editable
 		_textField.type = TextFieldType.INPUT;
-		
+		_textField.x = -TEXTFIELD_GUTTER;
+		_textField.y = -TEXTFIELD_GUTTER;
+
 		//forward input event
 		//note : "change" used instead of "input", as input is dispatched before
 		//actual text field value changed
@@ -156,19 +164,19 @@ class NativeTextInput extends NativeTextInputBase
 	override private function get_viewport():RectangleVO
 	{
 		var rect:RectangleVO = new RectangleVO();
-		rect.x = _textField.x;
-		rect.y = _textField.y;
-		rect.width = _textField.width;
-		rect.height = _textField.height;
+		rect.x = _textField.x + TEXTFIELD_GUTTER;
+		rect.y = _textField.y + TEXTFIELD_GUTTER;
+		rect.width = _textField.width - 2 * TEXTFIELD_GUTTER;
+		rect.height = _textField.height - 2 * TEXTFIELD_GUTTER;
 		return rect;
 	}
 	
 	override private function set_viewport(value:RectangleVO):RectangleVO
 	{
-		_textField.x = value.x;
-		_textField.y = value.y;
-		_textField.width = value.width;
-		_textField.height = value.height;
+		_textField.x = value.x - TEXTFIELD_GUTTER;
+		_textField.y = value.y - TEXTFIELD_GUTTER;
+		_textField.width = value.width + 2 * TEXTFIELD_GUTTER;
+		_textField.height = value.height + 2 * TEXTFIELD_GUTTER;
 		
 		return value;
 	}
@@ -258,6 +266,7 @@ class NativeTextInput extends NativeTextInputBase
 		}
 		
 		_textFormat.font = value;
+
 		updateTextFormat();
 		
 		return value;
@@ -267,7 +276,7 @@ class NativeTextInput extends NativeTextInputBase
 	{
 		return _textFormat.font;
 	}
-	
+
 	override private function get_value():String 
 	{
 		return _textField.text;
@@ -288,18 +297,30 @@ class NativeTextInput extends NativeTextInputBase
 		}
 		return _textField.maxChars = value;
 	}
-	
-	override private function set_letterSpacing(value:Float):Float
+
+	override private function get_align():String 
 	{
-		_textFormat.letterSpacing = value;
+		return switch( _textFormat.align ){
+			case TextFormatAlign.LEFT, TextFormatAlign.START : "left";
+			case TextFormatAlign.RIGHT, TextFormatAlign.END : "right";
+			case TextFormatAlign.JUSTIFY : "justify";
+			case TextFormatAlign.CENTER : "center";
+		}
+	}
+	
+	override private function set_align(value:String):String 
+	{
+		_textFormat.align = switch(value){
+			case "left" : TextFormatAlign.LEFT;
+			case "right" : TextFormatAlign.RIGHT;
+			case "justify" : TextFormatAlign.JUSTIFY;
+			case "center" : TextFormatAlign.CENTER;
+			default : TextFormatAlign.LEFT;
+		}
 		updateTextFormat();
-		
 		return value;
 	}
 	
-	override private function get_letterSpacing():Float
-	{
-		return _textFormat.letterSpacing;
-	}
+	
 	
 }
