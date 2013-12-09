@@ -300,9 +300,9 @@ class Element extends Node
 	 * Overriden as for element node, attributes
 	 * are cloned as well
 	 */
-	override private function doCloneNode():Element
+	override private function doCloneNode():HTMLElement
 	{
-		var clonedElement:Element = new Element(tagName);
+		var clonedElement:HTMLElement = this.ownerDocument.createElement(tagName);
 		
 		var length:Int = attributes.length;
 		for (i in 0...length)
